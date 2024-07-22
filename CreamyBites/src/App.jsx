@@ -12,7 +12,7 @@ function App() {
     <ToastContainer/>
       <Routes>
         <Route path="" element={<LoginPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="admin" element={<AdminPage />} />
       </Routes>
 
     </BrowserRouter>
