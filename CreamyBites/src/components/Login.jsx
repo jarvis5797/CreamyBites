@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signIn } from "../services/user-service";
+import { toast } from "react-toastify";
+import { doLogin } from "../utils/authenticationHelper";
 
 const Login = () =>{
 
@@ -18,10 +20,20 @@ const Login = () =>{
     const submitForm=(event)=>{
         event.preventDefault()
         signIn(loginDetails).then((resp)=>{
-            console.log(resp);
-        }).catch(()=>{
-            console.log("error")
-        })
+            doLogin(resp,()=>{
+                if(resp.user.role=='Admin'){
+                    navigate("/admin")
+                }else{
+                    navigate("/dashboard")
+                }
+            })
+        }).catch((error) => {
+            if (error.response && error.response.status === 401) {
+                toast.error("Invalid email or password");
+            } else {
+                toast.error("An error occurred. Please try again later.");
+            }
+        });
 
     }
 
