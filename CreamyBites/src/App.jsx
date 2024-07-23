@@ -1,9 +1,9 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Base from './components/base';
 import LoginPage from './pages/LoginPage';
 import { ToastContainer } from "react-toastify";
 import AdminPage from './pages/AdminPage';
+import AdminItemsPage from './pages/admin/AdminItemsPage';
 
 
 function App() {
@@ -12,7 +12,9 @@ function App() {
     <ToastContainer/>
       <Routes>
         <Route path="" element={<LoginPage />} />
-        <Route path="admin" element={<AdminPage />} />
+        <Route path="admin" element={<AdminItemsPage />} >
+        <Route path='items' element={<AdminItemsPage />}/>
+        </Route>
       </Routes>
 
     </BrowserRouter>
