@@ -1,93 +1,43 @@
 import { useNavigate } from "react-router-dom";
 import ItemForm from "./ItemForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllItems } from "../services/item-service";
 
 const Items = () =>{
 
 
-    const items = [
-        {
-          id: 1,
-          name: 'Earthen Bottle',
-          href: '#',
-          price: '$48',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-01.jpg',
-          imageAlt: 'Tall slender porcelain bottle with natural clay textured body and cork stopper.',
-        },
-        {
-          id: 2,
-          name: 'Nomad Tumbler',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-02.jpg',
-          imageAlt: 'Olive drab green insulated bottle with flared screw lid and flat top.',
-        },
-        {
-          id: 3,
-          name: 'Focus Paper Refill',
-          href: '#',
-          price: '$89',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-03.jpg',
-          imageAlt: 'Person using a pen to cross a task off a productivity paper card.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        {
-          id: 4,
-          name: 'Machined Mechanical Pencil',
-          href: '#',
-          price: '$35',
-          imageSrc: 'https://tailwindui.com/img/ecommerce-images/category-page-04-image-card-04.jpg',
-          imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
-        },
-        // More products...
-      ];
+    const [items , setItems] = useState([{}]);
+
+    const getItems = ()=>{
+      getAllItems().then((data)=>{
+        const ItemsArray=data.map((item)=>{
+          const weight = giveValueforWeight(item.weight);
+          return{
+            id: item.itemId,
+            flavour: item.flavour,
+            imageSrc: item.imageSrc,
+            weight: weight,
+            price:item.price
+          };
+        });
+        setItems(ItemsArray);
+      })
+    }
+
+    const giveValueforWeight=(weight)=>{
+      if(weight==="HALF"){
+        return "0.5 kg"
+      }else if(weight==="ONE"){
+        return "1.0 kg"
+      }else if(weight==="TWO"){
+        return "2.0 kg"
+      }
+    }
+
+    useEffect(() => {
+      getItems();
+    }, [])
+    
 
       const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -110,24 +60,25 @@ const Items = () =>{
             <a key={item.id} href={items.href} className="group">
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
                 <img
-                  alt={item.imageAlt}
                   src={item.imageSrc}
                   className="h-full w-full object-cover object-center group-hover:opacity-75"
                 />
               </div>
-              <h3 className="mt-4 text-sm text-gray-700">{item.name}</h3>
-              <p className="mt-1 text-lg font-medium text-gray-900">{item.price}</p>
+              <h3 className="mt-4 text-lg font-large text-gray-700">Flavour : {item.flavour}</h3>
+              <h5 className="mt-1 text-lg font-large text-gray-700">Weight : {item.weight}</h5>
+              <p className="mt-2 text-lg font-medium text-gray-900">Price : {item.price}</p>
+            
             </a>
           ))}
         </div>
         {isModalOpen && (
                <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
-               <div className="bg-white w-full max-w-5xl p-8 rounded-lg relative overflow-auto max-h-[90vh]">
-                 <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                   </svg>
-                 </button>
+          <div className="bg-white w-full max-w-5xl p-8 rounded-lg relative overflow-auto max-h-[90vh]">
+            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
                         <ItemForm />
                     </div>
                 </div>
