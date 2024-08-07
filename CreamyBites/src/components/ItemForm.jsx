@@ -1,19 +1,46 @@
-import { useState } from "react";
-import { addItem } from "../services/admin-service";
+import { useEffect, useState } from "react";
+import { addItem, editItem } from "../services/admin-service";
 import { toast } from "react-toastify";
 
-const ItemForm = () =>{
+const ItemForm = ({itemDetails , formName}) =>{
 
   const[item , setItem]=useState({
-    flavour:"",
-    description:"",
-    image:"",
-    weight:"",
+    flavour:'',
+    description:'',
+    image:'',
+    weight:'',
     price:0.0,
     add_ons:[],
-    variant:"",
-    type:"",
+    variant:'',
+    type:'',
   });
+
+  useEffect(() => {
+    if (itemDetails) {
+      setItem({
+        flavour: itemDetails.flavour || '',
+        price: itemDetails.price || 0.0,
+        description: itemDetails.description || '',
+        image:itemDetails.image || '',
+        type: itemDetails.type || '',
+        add_ons:itemDetails.add_ons || [],
+        variant: itemDetails.variant || '',
+        weight: itemDetails.weight || '',
+      });
+    } else {
+      setItem({
+        flavour: '',
+        price: 0.0,
+        description: '',
+        image:'',
+        type: '',
+        add_ons:[],
+        variant: '',
+        weight: '',
+      });
+    }
+    console.log(item);
+  }, [itemDetails]);
 
   const handleChange=(event , propertry)=>{
     if (event.target.type === 'checkbox') {
@@ -21,7 +48,8 @@ const ItemForm = () =>{
       setItem(prevState => {
         const updatedAddOns = checked
           ? [...prevState.add_ons, id]  
-          : prevState.add_ons.filter(addOn => addOn !== id);  
+          : prevState.add_ons.filter(addOn => addOn !== id); 
+          console.log(updatedAddOns) 
         return { ...prevState, add_ons: updatedAddOns };
       });
     }
@@ -51,9 +79,14 @@ const ItemForm = () =>{
     return;
   }
   try {
+    if(formName==="Add Item"){
     await addItem(item);
     toast.success("Item added successfully!");
-  } catch (error) {
+  }else{
+    console.log(item);
+    await editItem(itemDetails.itemId,item);
+    toast.success("Item updated successfully!");
+  }} catch (error) {
     toast.error("There is some problem with adding the item!!");
   }
   }
@@ -63,7 +96,7 @@ const ItemForm = () =>{
         <form>
   <div class="space-y-12">
     <div class="border-b border-gray-900/10 pb-12">
-      <h2 class="text-base font-semibold leading-7 text-gray-900">Add Item</h2>
+      <h2 class="text-base font-semibold leading-7 text-gray-900">{formName}</h2>
       <p class="mt-1 text-sm leading-6 text-gray-600">This information will be displayed to the user</p>
 
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -75,6 +108,7 @@ const ItemForm = () =>{
                 class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" 
                 placeholder="Choclate"
                 onChange={(e)=>handleChange(e,'flavour')}
+                value={item.flavour}
                 />
             </div>
           </div>
@@ -84,7 +118,7 @@ const ItemForm = () =>{
           <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
           <div class="mt-2">
             <textarea id="description" name="description" rows="3" 
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'description')}>
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'description')} value={item.description}>
 
             </textarea>
           </div>
@@ -101,7 +135,7 @@ const ItemForm = () =>{
           <label for="weight" class="block text-sm font-medium leading-6 text-gray-900">Weight</label>
           <div class="mt-2">
             <select id="weight" name="weight" autocomplete="weight" 
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'weight')}>
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'weight')} value={item.weight}>
               <option value="">select weight</option>
               <option value="HALF">0.5 kg</option>
               <option value="ONE">1.0 kg</option>
@@ -113,7 +147,7 @@ const ItemForm = () =>{
         <div class="sm:col-span-3">
           <label for="variant" class="block text-sm font-medium leading-6 text-gray-900">Variant</label>
           <div class="mt-2">
-            <select id="variant" name="variant" autocomplete="variant-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'variant')}>
+            <select id="variant" name="variant" autocomplete="variant-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'variant')} value={item.variant}>
             <option value="">select variant</option>
               <option value="EGGLESS">Eggless</option>
               <option value="WITHEGG">With egg</option>
@@ -126,6 +160,7 @@ const ItemForm = () =>{
             <input id="image" name="image" type="text" autocomplete="image" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             onChange={(e)=>handleChange(e,'image')}
+            value={item.image}
             />
           </div>
         </div>
@@ -133,7 +168,7 @@ const ItemForm = () =>{
         <div class="sm:col-span-3">
           <label for="type" class="block text-sm font-medium leading-6 text-gray-900">Type</label>
           <div class="mt-2">
-            <select id="type" name="type" autocomplete="type-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'type')}>
+            <select id="type" name="type" autocomplete="type-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'type')} value={item.type}>
             <option value="">select Type</option>
 
               <option value="CREAM">Cream</option>
@@ -152,6 +187,7 @@ const ItemForm = () =>{
             <div class="relative flex gap-x-3">
               <div class="flex h-6 items-center">
                 <input id="Knife" name="knife" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                checked={item.add_ons.includes('Knife')}
                 onChange={(e) => handleChange(e, 'add_ons')}
                 />
               </div>
@@ -162,6 +198,7 @@ const ItemForm = () =>{
             <div class="relative flex gap-x-3">
               <div class="flex h-6 items-center">
                 <input id="Cream" name="cream" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                checked={item.add_ons.includes('Cream')}
                 onChange={(e) => handleChange(e, 'add_ons')}
                 />
               </div>
@@ -178,6 +215,7 @@ const ItemForm = () =>{
             <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
               <input type="text" name="price" id="price" autocomplete="price" class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" placeholder="400"
               onChange={(e) => handleChange(e, 'price')}
+              value={item.price}
               />
             </div>
           </div>
