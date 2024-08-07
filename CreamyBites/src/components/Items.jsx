@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import ItemForm from "./ItemForm";
 import { useEffect, useState } from "react";
-import { getAllItems } from "../services/item-service";
+import { getAllItems, getItemById } from "../services/item-service";
+import AdminItemOverview from "./AdminItemOverview";
+
 
 const Items = () =>{
 
-
+    const [item, setItem] = useState(null);
     const [items , setItems] = useState([{}]);
 
     const getItems = ()=>{
@@ -49,6 +51,32 @@ const Items = () =>{
           setIsModalOpen(false);
       };
 
+      const [isOverviewOpen, setIsOverviewOpen] = useState(false);
+
+
+      const closeItemHover = () =>{
+        setIsOverviewOpen(false);
+      };
+
+      const handleViewItem = (id) =>{
+        setIsOverviewOpen(true);
+        getItemById(id).then((data)=>{
+          setItem(data);
+        })
+      }
+
+      const [isEditOpen , setIsEditOpen] = useState(false);
+
+      const handleEditOpen = () =>{
+        setIsOverviewOpen(false);
+        setIsEditOpen(true);
+      }
+      
+      const closeEdit = () =>{
+        setIsEditOpen(false);
+      }
+
+
     return(
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 className="sr-only">Items</h2>
@@ -57,7 +85,7 @@ const Items = () =>{
         > + Add Item </button>
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {items.map((item) => (
-            <a key={item.id} href={items.href} className="group">
+            <a key={item.id} href={items.href} className="group" onClick={(e)=>handleViewItem(item.id)}>
               <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
                 <img
                   src={item.imageSrc}
@@ -79,9 +107,32 @@ const Items = () =>{
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
-                        <ItemForm />
+                        <ItemForm formName={"Add Item"}/>
                     </div>
                 </div>
+            )}
+            {isOverviewOpen && item &&(
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+              <div className="bg-white w-full max-w-5xl p-8 rounded-lg relative overflow-auto max-h-[90vh]">
+                <button onClick={closeItemHover} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+                            <AdminItemOverview item={item} onEdit={handleEditOpen} onClose={closeEdit}/>
+                    </div>
+                    </div>
+            )}{isEditOpen && item && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+              <div className="bg-white w-full max-w-5xl p-8 rounded-lg relative overflow-auto max-h-[90vh]">
+                <button onClick={closeEdit} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+                            <ItemForm itemDetails={item} formName={"Edit Item"}/>
+                        </div>
+                    </div>
             )}
       </div>
 
