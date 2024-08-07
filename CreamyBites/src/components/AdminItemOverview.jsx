@@ -25,7 +25,7 @@ const AdminItemOverview = ({item , onEdit , onClose}) => {
         <div className="flex flex-col lg:flex-row max-w-7xl mx-auto lg:px-8">
           <div className="flex-shrink-0 lg:w-2/3 lg:pr-8">
             <img
-              src="https://github.com/jarvis5797/creamybites-images/blob/main/choclate-truffel-cake.jpg?raw=true"
+              src={item.image}
               alt="Model wearing plain white basic tee."
               className="h-full w-full object-cover object-center"
             />
