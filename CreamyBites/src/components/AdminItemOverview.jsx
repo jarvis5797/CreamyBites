@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { deleteItem } from "../services/admin-service";
+import { toast } from "react-toastify";
 
 const AdminItemOverview = ({item , onEdit , onClose}) => {
 
@@ -12,8 +14,13 @@ const AdminItemOverview = ({item , onEdit , onClose}) => {
     setIsConfirmDeleteOpen(false);
   };
 
-  const handleConfirmDelete = () => {
-    console.log("Item deleted");
+  const handleConfirmDelete = async () => {
+    try{
+      await deleteItem(item.itemId);
+      toast.success("Item deleted successfullt !!")
+    } catch (error) {
+      toast.error("There is some problem with adding the item!!");
+    }
     handleCloseConfirmDelete();
   };
 
@@ -27,7 +34,7 @@ const AdminItemOverview = ({item , onEdit , onClose}) => {
             <img
               src={item.image}
               alt="Model wearing plain white basic tee."
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-cover obje\ct-center"
             />
           </div>
 
