@@ -9,3 +9,8 @@ export const editItem=(id , item)=>{
     setToken();
     return connectBackend.put(`/editItem/${id}`, item).then((response)=>response.data);
 }
+
+export const deleteItem=(id)=>{
+    setToken();
+    return connectBackend.delete(`/deleteItem/${id}`).then((response)=>response.data);
+}

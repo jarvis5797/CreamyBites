@@ -1,5 +1,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { doLogout } from '../utils/authenticationHelper'
+import { useNavigate } from 'react-router-dom'
 
 const NavBar=()=>{
     
@@ -7,11 +9,17 @@ const NavBar=()=>{
         { name: 'Items', href: '/admin/items', current: true },
         { name: 'Orders', href: '#', current: false },
         { name: 'Users', href: '#', current: false },
-        // { name: '', href: '#', current: false },
       ]
 
       function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
+      }
+
+      const navigate = useNavigate();
+
+      const handleLogOut = ()=>{
+        doLogout();
+        navigate("/")
       }
     
     return(
@@ -19,7 +27,6 @@ const NavBar=()=>{
         <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
             <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-              {/* Mobile menu button*/}
               <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">Open main menu</span>
@@ -91,7 +98,7 @@ const NavBar=()=>{
                     </a>
                   </MenuItem>
                   <MenuItem>
-                    <a href="#" className="block px-4 py-2 text-sm text-black-700 data-[focus]:bg-gray-100">
+                    <a href="/" onClick={handleLogOut} className="block px-4 py-2 text-sm text-black-700 data-[focus]:bg-gray-100">
                       Sign out
                     </a>
                   </MenuItem>
