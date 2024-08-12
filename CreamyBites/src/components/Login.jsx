@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { signIn } from "../services/user-service";
 import { toast } from "react-toastify";
 import { doLogin } from "../utils/authenticationHelper";
+import SignupForm from "./SignupForm";
 
 const Login = () =>{
 
@@ -11,10 +12,20 @@ const Login = () =>{
         password:''
     })
 
+    const [signup , setSignup] = useState(false);
+
     const navigate = useNavigate();
 
     const handleChange=(event,propertry)=>{
         setLoginDetails({...loginDetails,[propertry]:event.target.value})
+    }
+
+    const handleOpenSignUp = ()=>{
+      setSignup(true);
+    }
+
+    const hadnleCloseSignUp = () =>{
+      setSignup(false);
     }
 
     const submitForm=(event)=>{
@@ -107,11 +118,25 @@ const Login = () =>{
   
             <p className="mt-10 text-center text-sm text-gray-500">
               Not a member?{' '}
-              <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+              <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500" onClick={handleOpenSignUp}>
                 Sign up
               </a>
             </p>
           </div>
+          {
+            signup &&(
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white w-full max-w-5xl p-8 rounded-lg relative overflow-auto max-h-[90vh]">
+            <button onClick={hadnleCloseSignUp} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+                        <SignupForm closeSignUp={hadnleCloseSignUp}/>
+                    </div>
+                </div>
+    )
+          }
         </div>
       </>
     );
