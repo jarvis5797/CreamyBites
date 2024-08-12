@@ -7,7 +7,10 @@ const ItemForm = ({itemDetails , formName}) =>{
   const[item , setItem]=useState({
     flavour:'',
     description:'',
-    image:'',
+    image1:'',
+    image2:'',
+    image3:'',
+    image4:'',
     weight:'',
     price:0.0,
     add_ons:[],
@@ -21,7 +24,10 @@ const ItemForm = ({itemDetails , formName}) =>{
         flavour: itemDetails.flavour || '',
         price: itemDetails.price || 0.0,
         description: itemDetails.description || '',
-        image:itemDetails.image || '',
+        image1:itemDetails.image1 || '',
+        image2:itemDetails.image2 || '',
+        image3:itemDetails.image3 || '',
+        image4:itemDetails.image4 || '',
         type: itemDetails.type || '',
         add_ons:itemDetails.add_ons || [],
         variant: itemDetails.variant || '',
@@ -32,14 +38,16 @@ const ItemForm = ({itemDetails , formName}) =>{
         flavour: '',
         price: 0.0,
         description: '',
-        image:'',
+        image1:'',
+        image2:'',
+        image3:'',
+        image4:'',
         type: '',
         add_ons:[],
         variant: '',
         weight: '',
       });
     }
-    console.log(item);
   }, [itemDetails]);
 
   const handleChange=(event , propertry)=>{
@@ -65,7 +73,7 @@ const ItemForm = ({itemDetails , formName}) =>{
   const handleSubmit= async (event)=>{
     event.preventDefault();
     console.log(item)
-    const requiredFields = ['flavour', 'description', 'image', 'weight', 'price', 'variant', 'type'];
+    const requiredFields = ['flavour', 'description', 'image1','image2','image3','image4','weight', 'price', 'variant', 'type'];
 
   const emptyFields = requiredFields.filter(field => {
     const value = item[field];
@@ -159,8 +167,29 @@ const ItemForm = ({itemDetails , formName}) =>{
           <div class="mt-2">
             <input id="image" name="image" type="text" autocomplete="image" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={(e)=>handleChange(e,'image')}
-            value={item.image}
+            onChange={(e)=>handleChange(e,'image1')}
+            value={item.image1}
+            />
+          </div>
+          <div class="mt-2">
+            <input id="image" name="image" type="text" autocomplete="image" 
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            onChange={(e)=>handleChange(e,'image2')}
+            value={item.image2}
+            />
+          </div>
+          <div class="mt-2">
+            <input id="image" name="image" type="text" autocomplete="image" 
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            onChange={(e)=>handleChange(e,'image3')}
+            value={item.image3}
+            />
+          </div>
+          <div class="mt-2">
+            <input id="image" name="image" type="text" autocomplete="image" 
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            onChange={(e)=>handleChange(e,'image4')}
+            value={item.image4}
             />
           </div>
         </div>

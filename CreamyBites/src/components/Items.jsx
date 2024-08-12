@@ -58,11 +58,11 @@ const Items = () =>{
         setIsOverviewOpen(false);
       };
 
-      const handleViewItem = (id) =>{
-        setIsOverviewOpen(true);
-        getItemById(id).then((data)=>{
+      const handleViewItem =async (id) =>{
+        await getItemById(id).then((data)=>{
           setItem(data);
         })
+        setIsOverviewOpen(true);
       }
 
       const [isEditOpen , setIsEditOpen] = useState(false);
