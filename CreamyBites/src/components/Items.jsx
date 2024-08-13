@@ -5,7 +5,7 @@ import { getAllItems, getItemById } from "../services/item-service";
 import AdminItemOverview from "./AdminItemOverview";
 
 
-const Items = () =>{
+const Items = ({isAdmin}) =>{
 
     const [item, setItem] = useState(null);
     const [items , setItems] = useState([{}]);
@@ -80,9 +80,9 @@ const Items = () =>{
     return(
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 className="sr-only">Items</h2>
-        <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        {isAdmin && <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
          onClick={handleAddItemClick}
-        > + Add Item </button>
+        > + Add Item </button>}
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {items.map((item) => (
             <a key={item.id} href={items.href} className="group" onClick={(e)=>handleViewItem(item.id)}>
