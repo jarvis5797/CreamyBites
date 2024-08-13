@@ -5,7 +5,7 @@ import NavBar from "../../components/NavBar";
 const UserItemPage=()=>{
     return(
         <>
-        <NavBar/>
+        <NavBar isAdmin={false}/>
         <Base>
         <Items isAdmin={false}/>
         </Base>

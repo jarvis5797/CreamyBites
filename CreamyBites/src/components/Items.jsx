@@ -26,6 +26,8 @@ const Items = ({isAdmin}) =>{
       })
     }
 
+    const [user ,setUser] = useState('User');
+
     const giveValueforWeight=(weight)=>{
       if(weight==="HALF"){
         return "0.5 kg"
@@ -38,6 +40,9 @@ const Items = ({isAdmin}) =>{
 
     useEffect(() => {
       getItems();
+      if(isAdmin){
+        setUser('Admin')
+      }
     }, [])
     
 
@@ -119,7 +124,7 @@ const Items = ({isAdmin}) =>{
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
-                            <AdminItemOverview item={item} onEdit={handleEditOpen} onClose={closeEdit}/>
+                            <AdminItemOverview item={item} onEdit={handleEditOpen} onClose={closeEdit} user={user}/>
                     </div>
                     </div>
             )}{isEditOpen && item && (
