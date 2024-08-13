@@ -5,9 +5,9 @@ import NavBar from "../../components/NavBar";
 const AdminItemsPage = () =>{
     return(
         <>
-        <NavBar/>
+        <NavBar isAdmin={true}/>
         <Base>
-        <Items isAdmin={true}/>
+        <Items isAdmin={true} />
         </Base>
         </>
     );

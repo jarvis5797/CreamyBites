@@ -31,10 +31,6 @@ useEffect(()=>{
     setIsConfirmDeleteOpen(false);
   };
 
-  useEffect(()=>{
-    console.log("item" + item)
-  })
-
   const handleConfirmDelete = async () => {
     try{
       await deleteItem(item.itemId);
@@ -264,7 +260,7 @@ useEffect(()=>{
 
               <div className="mt-4">
                 <h3 className="text-sm font-medium text-gray-900">
-                  {item.type}
+                  {item.type.toLowerCase()}
                 </h3>
               </div>
 
@@ -273,7 +269,7 @@ useEffect(()=>{
 
                 <div className="mt-4 space-y-6">
                   <h3 className="text-sm font-medium text-gray-900">
-                    {item.variant}
+                    {item.variant.toLowerCase()}
                   </h3>
                 </div>
               </div>

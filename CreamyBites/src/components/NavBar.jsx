@@ -2,14 +2,15 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { doLogout } from '../utils/authenticationHelper'
 import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
-const NavBar=()=>{
+const NavBar=({isAdmin})=>{
     
-    const navigation = [
+      const [navigation, setNavigation] = useState([
         { name: 'Items', href: '/admin/items', current: true },
         { name: 'Orders', href: '#', current: false },
         { name: 'Users', href: '#', current: false },
-      ]
+      ]);
 
       function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
@@ -21,6 +22,16 @@ const NavBar=()=>{
         doLogout();
         navigate("/");
       }
+
+      useEffect(()=>{
+        if (!isAdmin) {
+          setNavigation([
+            { name: 'Items', href: '/admin/items', current: true },
+            { name: 'Orders', href: '#', current: false },
+            { name: 'Cart', href: '#', current: false },
+          ]);
+        }
+      })
     
     return(
         <Disclosure as="nav" className="bg-white-800">
