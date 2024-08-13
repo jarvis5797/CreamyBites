@@ -2,15 +2,15 @@ import Base from "../../components/base";
 import Items from "../../components/Items";
 import NavBar from "../../components/NavBar";
 
-const AdminItemsPage = () =>{
+const UserItemPage=()=>{
     return(
         <>
         <NavBar/>
         <Base>
-        <Items isAdmin={true}/>
+        <Items isAdmin={false}/>
         </Base>
         </>
     );
 }
 
-export default AdminItemsPage;
+export default UserItemPage;

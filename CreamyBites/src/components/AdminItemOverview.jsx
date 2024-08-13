@@ -2,11 +2,26 @@ import { useEffect, useState } from "react";
 import { deleteItem } from "../services/admin-service";
 import { toast } from "react-toastify";
 
-const AdminItemOverview = ({item , onEdit , onClose}) => {
+const AdminItemOverview = ({item , onEdit , onClose , user}) => {
 
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
   const reviews = { href: '#', average: 4, totalCount: 117 }
+
+  const[buttons ,setButtons] = useState({
+    button1:'Edit Item',
+    button2:'Delete Item'
+  })
+
+useEffect(()=>{
+  if(user!='Admin'){
+    setButtons({
+      button1:'Add to Cart',
+      button2:'Order Now'
+    })
+  }
+})
+  
 
   const handleOpenConfirmDelete = () => {
     setIsConfirmDeleteOpen(true);
@@ -223,7 +238,7 @@ const AdminItemOverview = ({item , onEdit , onClose}) => {
               className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={onEdit}
             >
-              Edit
+              {buttons.button1}
             </button>
 
             <button
@@ -231,7 +246,7 @@ const AdminItemOverview = ({item , onEdit , onClose}) => {
               class="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-red-600 px-8 py-3 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={handleOpenConfirmDelete}
             >
-              Delete
+              {buttons.button2}
             </button>
           </div>
 
