@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { addItem, editItem } from "../services/admin-service";
 import { toast } from "react-toastify";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const ItemForm = ({itemDetails , formName}) =>{
+
+  const s3 = new S3Client({
+    region: 'us-east-1', 
+    endpoint: 'https://blr1.digitaloceanspaces.com', 
+    credentials: {
+      accessKeyId: 'DO00L7DTUF4MR4E2HP67', 
+      secretAccessKey: 'nDuommlrmgejWXZBnKhmGKVexATPCcawLrIFL2kkFLg', 
+    },
+  });
 
   const[item , setItem]=useState({
     flavour:'',
@@ -69,6 +79,41 @@ const ItemForm = ({itemDetails , formName}) =>{
       setItem(prevState => ({ ...prevState, [propertry]: event.target.value }));
     }
   }
+
+  const uploadImageToSpaces = (file) => {
+    return new Promise((resolve, reject) => {
+      const params = {
+        Bucket: 'items-image',  
+        Key: `prod-images/${Date.now()}-${file.name}`,  
+        Body: file,
+        ACL: 'public-read',  
+        ContentType: file.type, 
+      };
+
+      const command = new PutObjectCommand(params);
+
+      s3.send(command)
+        .then((data) => {
+          resolve(`https://blr1.digitaloceanspaces.com/${params.Bucket}/${params.Key}`);  
+        })
+        .catch((err) => {
+          reject('Error uploading image: ' + err);
+        });
+    });
+  };
+
+  const handleImageChange = async (event, imageField) => {
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        const uploadedUrl = await uploadImageToSpaces(file);
+        console.log(uploadedUrl)
+        setItem(prevState => ({ ...prevState, [imageField]: uploadedUrl }));
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  };
 
   const handleSubmit= async (event)=>{
     event.preventDefault();
@@ -165,32 +210,49 @@ const ItemForm = ({itemDetails , formName}) =>{
         <div class="sm:col-span-4">
           <label for="image" class="block text-sm font-medium leading-6 text-gray-900">Image Link</label>
           <div class="mt-2">
-            <input id="image" name="image" type="text" autocomplete="image" 
+            <input id="image" name="image" type="file" autocomplete="image" accept="image/*" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={(e)=>handleChange(e,'image1')}
-            value={item.image1}
+            onChange={(e)=>handleImageChange(e,'image1')}
             />
+            {item.image1 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">Uploaded Image: <a href={item.image1} target="_blank" rel="noopener noreferrer" className="text-indigo-600">{item.image1}</a></p>
+              </div>
+            )}
           </div>
           <div class="mt-2">
-            <input id="image" name="image" type="text" autocomplete="image" 
+          <input id="image" name="image" type="file" autocomplete="image" accept="image/*" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={(e)=>handleChange(e,'image2')}
+            onChange={(e)=>handleImageChange(e,'image2')}
             value={item.image2}
             />
+            {item.image2 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">Uploaded Image: <a href={item.image2} target="_blank" rel="noopener noreferrer" className="text-indigo-600">{item.image2}</a></p>
+              </div>
+            )}
           </div>
           <div class="mt-2">
-            <input id="image" name="image" type="text" autocomplete="image" 
+          <input id="image" name="image" type="file" autocomplete="image" accept="image/*" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={(e)=>handleChange(e,'image3')}
-            value={item.image3}
+            onChange={(e)=>handleImageChange(e,'image3')}
             />
+            {item.image3 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">Uploaded Image: <a href={item.image3} target="_blank" rel="noopener noreferrer" className="text-indigo-600">{item.image3}</a></p>
+              </div>
+            )}
           </div>
           <div class="mt-2">
-            <input id="image" name="image" type="text" autocomplete="image" 
+          <input id="image" name="image" type="file" autocomplete="image" accept="image/*" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            onChange={(e)=>handleChange(e,'image4')}
-            value={item.image4}
+            onChange={(e)=>handleImageChange(e,'image4')}
             />
+            {item.image4 && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">Uploaded Image: <a href={item.image4} target="_blank" rel="noopener noreferrer" className="text-indigo-600">{item.image4}</a></p>
+              </div>
+            )}
           </div>
         </div>
 
