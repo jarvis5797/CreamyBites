@@ -93,7 +93,7 @@ const ItemForm = ({itemDetails , formName , type}) =>{
     return new Promise((resolve, reject) => {
       const params = {
         Bucket: 'items-image',  
-        Key: `images/${Date.now()}-${file.name}`,  
+        Key: `prod-images/${Date.now()}-${file.name}`,  
         Body: file,
         ACL: 'public-read',  
         ContentType: file.type, 
