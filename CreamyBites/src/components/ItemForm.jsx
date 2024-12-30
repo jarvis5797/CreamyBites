@@ -3,7 +3,7 @@ import { addItem, editItem } from "../services/admin-service";
 import { toast } from "react-toastify";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const ItemForm = ({itemDetails , formName}) =>{
+const ItemForm = ({itemDetails , formName , type}) =>{
 
   const s3 = new S3Client({
     region: 'us-east-1', 
@@ -21,11 +21,14 @@ const ItemForm = ({itemDetails , formName}) =>{
     image2:'',
     image3:'',
     image4:'',
-    weight:'',
+    weight:'NA',
     price:0.0,
     add_ons:[],
-    variant:'',
-    type:'',
+    variant:'NA',
+    type:type,
+    size:'NA',
+    minimumTime:'',
+    isAvailable:true
   });
 
   useEffect(() => {
@@ -40,8 +43,11 @@ const ItemForm = ({itemDetails , formName}) =>{
         image4:itemDetails.image4 || '',
         type: itemDetails.type || '',
         add_ons:itemDetails.add_ons || [],
-        variant: itemDetails.variant || '',
-        weight: itemDetails.weight || '',
+        variant: itemDetails.variant || 'NA',
+        weight: itemDetails.weight || 'NA',
+        size:itemDetails.size || 'NA',
+        minimumTime: itemDetails.minimumTime || '',
+        isAvailable:itemDetails.isAvailable || true
       });
     } else {
       setItem({
@@ -52,10 +58,13 @@ const ItemForm = ({itemDetails , formName}) =>{
         image2:'',
         image3:'',
         image4:'',
-        type: '',
+        type: type,
         add_ons:[],
-        variant: '',
-        weight: '',
+        variant: 'NA',
+        weight: 'NA',
+        size:'NA',
+        minimumTime:'',
+        isAvailable:true
       });
     }
   }, [itemDetails]);
@@ -84,7 +93,7 @@ const ItemForm = ({itemDetails , formName}) =>{
     return new Promise((resolve, reject) => {
       const params = {
         Bucket: 'items-image',  
-        Key: `prod-images/${Date.now()}-${file.name}`,  
+        Key: `images/${Date.now()}-${file.name}`,  
         Body: file,
         ACL: 'public-read',  
         ContentType: file.type, 
@@ -117,12 +126,19 @@ const ItemForm = ({itemDetails , formName}) =>{
 
   const handleSubmit= async (event)=>{
     event.preventDefault();
-    console.log(item)
-    const requiredFields = ['flavour', 'description', 'image1','image2','image3','image4','weight', 'price', 'variant', 'type'];
-
+    console.log(item);
+    let requiredFields = null;
+    if(type==="CAKE"){
+      requiredFields = ['flavour', 'description', 'image1','image2','image3','image4','weight', 'price', 'variant', 'type' , 'minimumTime' , 'isAvailable'];
+    }else{
+      requiredFields = ['flavour', 'description', 'image1','image2','image3','image4', 'price','size', 'type','minimumTime' , 'isAvailable'];
+    }
   const emptyFields = requiredFields.filter(field => {
     const value = item[field];
-    return (field === 'price' ? isNaN(parseFloat(value)) || parseFloat(value) <= 0 : !value.trim());
+    if (field === 'price') {
+      return isNaN(parseFloat(value)) || parseFloat(value) <= 0;
+    } 
+    return typeof value === 'string' ? !value.trim() : !value;
   });
 
   if (emptyFields.length > 0) {
@@ -136,7 +152,6 @@ const ItemForm = ({itemDetails , formName}) =>{
     await addItem(item);
     toast.success("Item added successfully!");
   }else{
-    console.log(item);
     await editItem(itemDetails.itemId,item);
     toast.success("Item updated successfully!");
   }} catch (error) {
@@ -184,7 +199,8 @@ const ItemForm = ({itemDetails , formName}) =>{
       <h2 class="text-base font-semibold leading-7 text-gray-900">Other Information</h2>
 
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-      <div class="sm:col-span-3">
+      {type==="CAKE" && 
+      (<div class="sm:col-span-3">
           <label for="weight" class="block text-sm font-medium leading-6 text-gray-900">Weight</label>
           <div class="mt-2">
             <select id="weight" name="weight" autocomplete="weight" 
@@ -196,7 +212,22 @@ const ItemForm = ({itemDetails , formName}) =>{
             </select>
           </div>
         </div>
+      )}
 
+      {type==="PIZZA" && (
+        <div class="sm:col-span-3">
+          <label for="size" class="block text-sm font-medium leading-6 text-gray-900">Size</label>
+          <div class="mt-2">
+            <select id="size" name="size" autocomplete="size" 
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'size')} value={item.size}>
+              <option value="">select size</option>
+              <option value="REGULAR">Regular</option>
+              <option value="MEDIUM">Medium</option>
+            </select>
+          </div>
+        </div>
+    )}
+    {type==="CAKE" &&(
         <div class="sm:col-span-3">
           <label for="variant" class="block text-sm font-medium leading-6 text-gray-900">Variant</label>
           <div class="mt-2">
@@ -207,6 +238,22 @@ const ItemForm = ({itemDetails , formName}) =>{
             </select>
           </div>
         </div>
+    )}
+
+        <div class="sm:col-span-4">
+          <label for="minimumTime" class="block text-sm font-medium leading-6 text-gray-900">Minimum Time</label>
+          <div class="mt-2">
+            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+              <input type="text" name="minimumTime" id="minimumTime" autocomplete="minimumTime" 
+                class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" 
+                placeholder="hh:mm"
+                onChange={(e)=>handleChange(e,'minimumTime')}
+                value={item.minimumTime}
+                />
+            </div>
+          </div>
+        </div>
+        
         <div class="sm:col-span-4">
           <label for="image" class="block text-sm font-medium leading-6 text-gray-900">Image Link</label>
           <div class="mt-2">
@@ -224,7 +271,6 @@ const ItemForm = ({itemDetails , formName}) =>{
           <input id="image" name="image" type="file" autocomplete="image" accept="image/*" 
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             onChange={(e)=>handleImageChange(e,'image2')}
-            value={item.image2}
             />
             {item.image2 && (
               <div className="mt-2">
@@ -253,18 +299,6 @@ const ItemForm = ({itemDetails , formName}) =>{
                 <p className="text-sm text-gray-600">Uploaded Image: <a href={item.image4} target="_blank" rel="noopener noreferrer" className="text-indigo-600">{item.image4}</a></p>
               </div>
             )}
-          </div>
-        </div>
-
-        <div class="sm:col-span-3">
-          <label for="type" class="block text-sm font-medium leading-6 text-gray-900">Type</label>
-          <div class="mt-2">
-            <select id="type" name="type" autocomplete="type-name" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6" onChange={(e)=>handleChange(e,'type')} value={item.type}>
-            <option value="">select Type</option>
-
-              <option value="CREAM">Cream</option>
-              <option value="COOKIE">Cookie</option>
-            </select>
           </div>
         </div>
       </div>

@@ -20,7 +20,28 @@ useEffect(()=>{
       button2:'Order Now'
     })
   }
-})
+} , [user])
+
+  const [selectedAddOns, setSelectedAddOns] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(item.price);
+
+  const availableAddOns = item.add_ons;
+
+  useEffect(() => {
+    let price = item.price;
+    if (selectedAddOns.includes("cream")) {
+      price += 50;
+    }
+    setTotalPrice(price);
+  }, [selectedAddOns, item.price]);
+
+  const handleAddOnChange = (addOn) => {
+    if (selectedAddOns.includes(addOn)) {
+      setSelectedAddOns(selectedAddOns.filter((item) => item !== addOn));
+    } else {
+      setSelectedAddOns([...selectedAddOns, addOn]);
+    }
+  };
   
 
   const handleOpenConfirmDelete = () => {
@@ -87,7 +108,7 @@ useEffect(()=>{
           <div className="mt-4 lg:row-span-3 lg:mt-0">
             <h2 className="sr-only">Product information</h2>
             <p className="text-3xl tracking-tight text-gray-900">
-              {item.price}
+              {totalPrice}
             </p>
 
             <div class="mt-6">
@@ -165,68 +186,50 @@ useEffect(()=>{
               </div>
             </div>
 
-            <div className="mt-10">
+            {item.type==='CAKE' &&(<div className="mt-10">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-medium text-gray-900">Weight</h3>
               </div>
+              <h3 className="text-sm font-bold tracking-tight text-gray-900 sm:text-sm">
+              {item.weight.toLowerCase()}
+            </h3>
+              
+            </div>
+            )}
 
-              <fieldset aria-label="Choose a size" class="mt-4">
-                <div class="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
-                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium uppercase text-gray-900 shadow-sm hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6">
-                    <input
-                      type="radio"
-                      name="size-choice"
-                      value="M"
-                      class="sr-only"
-                    />
-                    <span>0.5Kg</span>
-                    <span
-                      class="pointer-events-none absolute -inset-px rounded-md"
-                      aria-hidden="true"
-                    ></span>
-                  </label>
+            {item.type === 'PIZZA' && (<div className="mt-10">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-gray-900">Size</h3>
+              </div>
+              <h3 className="text-sm font-bold tracking-tight text-gray-900 sm:text-sm">
+                {item.size.toLowerCase()}
+              </h3>
 
-                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium uppercase text-gray-900 shadow-sm hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6">
+            </div>
+            )}
+
+            <div className="mt-10">
+              <h3 className="text-sm font-medium text-gray-900">Add-Ons</h3>
+              <div className="mt-4 space-y-4">
+                {availableAddOns.map((addOn) => (
+                  <div key={addOn} className="flex items-center">
                     <input
-                      type="radio"
-                      name="size-choice"
-                      value="XL"
-                      class="sr-only"
+                      id={addOn}
+                      name={addOn}
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      onChange={() => handleAddOnChange(addOn)}
                     />
-                    <span>1Kg</span>
-                    <span
-                      class="pointer-events-none absolute -inset-px rounded-md"
-                      aria-hidden="true"
-                    ></span>
-                  </label>
-                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium uppercase text-gray-900 shadow-sm hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6">
-                    <input
-                      type="radio"
-                      name="size-choice"
-                      value="2XL"
-                      class="sr-only"
-                    />
-                    <span>1.5Kg</span>
-                    <span
-                      class="pointer-events-none absolute -inset-px rounded-md"
-                      aria-hidden="true"
-                    ></span>
-                  </label>
-                  <label class="group relative flex cursor-pointer items-center justify-center rounded-md border bg-white px-4 py-3 text-sm font-medium uppercase text-gray-900 shadow-sm hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6">
-                    <input
-                      type="radio"
-                      name="size-choice"
-                      value="3XL"
-                      class="sr-only"
-                    />
-                    <span>2Kg</span>
-                    <span
-                      class="pointer-events-none absolute -inset-px rounded-md"
-                      aria-hidden="true"
-                    ></span>
-                  </label>
-                </div>
-              </fieldset>
+                    <label
+                      htmlFor={addOn}
+                      className="ml-3 text-sm text-gray-600"
+                    >
+                      {addOn} -{" "}
+                      {addOn === "knife" ? "Free" : addOn === "cream" ? "₹50" : "₹0"}
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <button
@@ -256,15 +259,8 @@ useEffect(()=>{
             </div>
 
             <div className="mt-10">
-              <h3 className="text-sm font-medium text-gray-900">Type</h3>
 
-              <div className="mt-4">
-                <h3 className="text-sm font-medium text-gray-900">
-                  {item.type.toLowerCase()}
-                </h3>
-              </div>
-
-              <div className="mt-10">
+              { item.type==='CAKE' && (<div className="mt-10">
                 <h2 className="text-sm font-medium text-gray-900">Variant</h2>
 
                 <div className="mt-4 space-y-6">
@@ -273,6 +269,7 @@ useEffect(()=>{
                   </h3>
                 </div>
               </div>
+              )}
             </div>
           </div>
           {isConfirmDeleteOpen && (

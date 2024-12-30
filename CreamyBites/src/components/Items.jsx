@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import ItemForm from "./ItemForm";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getAllItems, getItemById } from "../services/item-service";
 import AdminItemOverview from "./AdminItemOverview";
 
@@ -44,7 +44,6 @@ const Items = ({isAdmin}) =>{
         setUser('Admin')
       }
     }, [])
-    
 
       const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -81,13 +80,60 @@ const Items = ({isAdmin}) =>{
         setIsEditOpen(false);
       }
 
+      const [showDropdown, setShowDropdown] = useState(false);
+
+      const [type , setType] = useState(null);
+
+      const toggleDropdown = () => {
+        setShowDropdown(true);
+      };
+
+      const handleOptionClick = (option) => {
+        setShowDropdown(false);
+        setType(option)
+        handleAddItemClick();
+      };
+
 
     return(
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 className="sr-only">Items</h2>
-        {isAdmin && <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-         onClick={handleAddItemClick}
-        > + Add Item </button>}
+        {isAdmin && (
+        <div className="relative inline-block">
+          {/* Add Item Button */}
+          <button
+            type="button"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            onClick={toggleDropdown}
+          >
+            + Add Item
+          </button>
+
+          {/* Dropdown Menu */}
+          {showDropdown && (
+            <div className="absolute left-full top-0 ml-2 w-48 bg-white divide-y divide-gray-100 rounded-md shadow-lg dark:bg-gray-700">
+              <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
+                <li>
+                  <button
+                    className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600"
+                    onClick={() => handleOptionClick('CAKE')}
+                  >
+                    Cake
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600"
+                    onClick={() => handleOptionClick('PIZZA')}
+                  >
+                    Pizza
+                  </button>
+                </li>
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
           {items.map((item) => (
             <a key={item.id} href={items.href} className="group" onClick={(e)=>handleViewItem(item.id)}>
@@ -112,7 +158,7 @@ const Items = ({isAdmin}) =>{
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
-                        <ItemForm formName={"Add Item"}/>
+                        <ItemForm formName={"Add Item"} type = {type}/>
                     </div>
                 </div>
             )}
@@ -135,7 +181,7 @@ const Items = ({isAdmin}) =>{
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
                   </svg>
                 </button>
-                            <ItemForm itemDetails={item} formName={"Edit Item"}/>
+                            <ItemForm itemDetails={item} formName={"Edit Item"} type={item.type}/>
                         </div>
                     </div>
             )}
